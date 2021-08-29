@@ -30,27 +30,29 @@ import "./Board.css";
 
 class Board extends Component {
     static defaultProps = {
-        nCols: 5,
-        nRows: 5,
+        ncols: 5,
+        nrows: 5,
         chanceLightStartsOn: 0.25,
     };
     constructor(props) {
         super(props);
-        const { nRows, nCols } = this.props;
+        const { nrows, ncols } = this.props;
         // TODO: set initial state
         this.state = {
             hasWon: false,
             board: this.createBoard(),
         };
+        this.createBoard = this.createBoard.bind(this);
+        this.flipCellsAround = this.flipCellsAround.bind(this);
     }
 
     /** create a board nrows high/ncols wide, each cell randomly lit or unlit */
 
     createBoard() {
         let board = [];
-        for (let y = 0; y < this.props.nRows; y++) {
+        for (let y = 0; y < this.props.nrows; y++) {
             let row = [];
-            for (let x = 0; x < this.props.nCols; x++) {
+            for (let x = 0; x < this.props.ncols; x++) {
                 row.push(Math.random() < this.props.chanceLightStartsOn);
             }
             board.push(row);
@@ -59,7 +61,7 @@ class Board extends Component {
     }
 
     /** handle changing a cell: update board & determine if winner */
-    /*
+
     flipCellsAround(coord) {
         let { ncols, nrows } = this.props;
         let board = this.state.board;
@@ -73,23 +75,36 @@ class Board extends Component {
             }
         }
 
+        // Flip initial cell
+        flipCell(y, x);
+        flipCell(y, x - 1);
+        flipCell(y, x + 1);
+        flipCell(y - 1, x);
+        flipCell(y + 1, x);
+
         // TODO: flip this cell and the cells around it
 
         // win when every cell is turned off
         // TODO: determine is the game has been won
-
+        let hasWon = false;
         this.setState({ board, hasWon });
-    }*/
+    }
 
     /** Render game board or winning message. */
 
     render() {
         let tblBoard = [];
-        for (let y = 0; y < this.props.nRows; y++) {
+        for (let y = 0; y < this.props.nrows; y++) {
             let row = [];
-            for (let x = 0; x < this.props.nCols; x++) {
+            for (let x = 0; x < this.props.ncols; x++) {
                 let coords = `${y}-${x}`;
-                row.push(<Cell key={coords} isLit={this.state.board[y][x]} />);
+                row.push(
+                    <Cell
+                        key={coords}
+                        isLit={this.state.board[y][x]}
+                        flipCellsAroundMe={() => this.flipCellsAround(coords)}
+                    />
+                );
             }
             tblBoard.push(<tr key={y}>{row}</tr>);
         }
