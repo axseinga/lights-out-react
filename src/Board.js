@@ -2,32 +2,6 @@ import React, { Component } from "react";
 import Cell from "./Cell";
 import "./Board.css";
 
-/** Game board of Lights out.
- *
- * Properties:
- *
- * - nrows: number of rows of board
- * - ncols: number of cols of board
- * - chanceLightStartsOn: float, chance any cell is lit at start of game
- *
- * State:
- *
- * - hasWon: boolean, true when board is all off
- * - board: array-of-arrays of true/false
- *
- *    For this board:
- *       .  .  .
- *       O  O  .     (where . is off, and O is on)
- *       .  .  .
- *
- *    This would be: [[f, f, f], [t, t, f], [f, f, f]]
- *
- *  This should render an HTML table of individual <Cell /> components.
- *
- *  This doesn't handle any clicks --- clicks are on individual cells
- *
- **/
-
 class Board extends Component {
     static defaultProps = {
         ncols: 5,
@@ -37,7 +11,6 @@ class Board extends Component {
     constructor(props) {
         super(props);
         const { nrows, ncols } = this.props;
-        // TODO: set initial state
         this.state = {
             hasWon: false,
             board: this.createBoard(),
@@ -75,24 +48,22 @@ class Board extends Component {
             }
         }
 
-        // Flip initial cell
         flipCell(y, x);
         flipCell(y, x - 1);
         flipCell(y, x + 1);
         flipCell(y - 1, x);
         flipCell(y + 1, x);
 
-        // TODO: flip this cell and the cells around it
-
-        // win when every cell is turned off
-        // TODO: determine is the game has been won
-        let hasWon = false;
+        let hasWon = board.every((row) => row.every((cell) => !cell));
         this.setState({ board, hasWon });
     }
 
     /** Render game board or winning message. */
 
     render() {
+        if (this.state.hasWon) {
+            return <h1>You WON!</h1>;
+        }
         let tblBoard = [];
         for (let y = 0; y < this.props.nrows; y++) {
             let row = [];
@@ -113,13 +84,6 @@ class Board extends Component {
                 <tbody>{tblBoard}</tbody>
             </table>
         );
-        // if the game is won, just show a winning msg & render nothing else
-
-        // TODO
-
-        // make table board
-
-        // TODO
     }
 }
 
